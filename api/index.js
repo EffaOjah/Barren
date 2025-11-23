@@ -36,18 +36,18 @@ app.get("/", checkAuth, (req, res) => {
 });
 
 // Connect to MongoDB BEFORE handling requests
-let isDBConnected = false;
-const handler = async (req, res, next) => {
-    if (!isDBConnected) {
-        try {
-            await connectDB();
-            isDBConnected = true;
-        } catch (err) {
-            return res.status(500).send("Database connection error");
-        }
-    }
-    next();
-};
-app.use(handler);
+// let isDBConnected = false;
+// const handler = async (req, res, next) => {
+//     if (!isDBConnected) {
+//         try {
+//             await connectDB();
+//             isDBConnected = true;
+//         } catch (err) {
+//             return res.status(500).send("Database connection error");
+//         }
+//     }
+//     next();
+// };
+// app.use(handler);
 
 module.exports = serverless(app);
