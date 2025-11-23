@@ -11,6 +11,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Tell Express where to look for EJS templates
+app.set("views", path.join(__dirname, "../pages"));
 app.set("view engine", "ejs");
 
 // Static files
@@ -29,7 +32,7 @@ app.use("/api/ticket", require("../routes/ticketRoutes"));
 // Home route
 const checkAuth = require("../middlewares/checkAuth");
 app.get("/", checkAuth, (req, res) => {
-    res.render(path.join(__dirname, "../pages/index"), { user: req.user });
+    res.render("index", { user: req.user });
 });
 
 // Connect to MongoDB BEFORE handling requests
