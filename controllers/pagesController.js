@@ -80,7 +80,7 @@ const pagesController = {
     },
     async myInvoices(req, res) {
         try {
-            const invoices = await Invoice.find({ userId: req.user.userId }).sort({ issueDate: -1 });
+            const invoices = await Invoice.find({ userId: req.user._id }).sort({ issueDate: -1 });
             console.log(invoices);
 
             return res.render(path.join(__dirname, '../pages/my_invoices'), { invoices, user: req.user });
