@@ -31,23 +31,23 @@ app.use("/api/ticket", require("../routes/ticketRoutes"));
 
 // Home route
 const checkAuth = require("../middlewares/checkAuth");
-app.get("/", checkAuth, (req, res) => {
+app.get("/", (req, res) => {
     res.render("index", { user: req.user });
 });
 
 // Connect to MongoDB BEFORE handling requests
-// let isDBConnected = false;
-// const handler = async (req, res, next) => {
-//     if (!isDBConnected) {
-//         try {
-//             await connectDB();
-//             isDBConnected = true;
-//         } catch (err) {
-//             return res.status(500).send("Database connection error");
-//         }
-//     }
-//     next();
-// };
-// app.use(handler);
+let isDBConnected = false;
+const handler = async (req, res, next) => {
+    if (!isDBConnected) {
+        try {
+            await connectDB();
+            isDBConnected = true;
+        } catch (err) {
+            return res.status(500).send("Database connection error");
+        }
+    }
+    next();
+};
+app.use(handler);
 
 module.exports = serverless(app);
