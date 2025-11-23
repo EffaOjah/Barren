@@ -1,15 +1,11 @@
 const serverless = require("serverless-http");
 const express = require("express");
-require("dotenv").config();
 const path = require("path");
 const ejs = require("ejs");
 const cookieParser = require("cookie-parser");
 const connectDB = require("../config/dbConfig");
 
 const app = express();
-
-// Connect DB
-connectDB();
 
 // Middlewares
 app.use(express.json());
@@ -30,11 +26,25 @@ app.use("/api/events", require("../routes/eventRoutes"));
 app.use("/api/payment", require("../routes/paymentRoutes"));
 app.use("/api/ticket", require("../routes/ticketRoutes"));
 
-// Home
+// Home route
 const checkAuth = require("../middlewares/checkAuth");
-
 app.get("/", checkAuth, (req, res) => {
     res.render(path.join(__dirname, "../pages/index"), { user: req.user });
 });
+
+// Connect to MongoDB BEFORE handling requests
+let isDBConnected = false;
+const handler = async (req, res, next) => {
+    if (!isDBConnected) {
+        try {
+            await connectDB();
+            isDBConnected = true;
+        } catch (err) {
+            return res.status(500).send("Database connection error");
+        }
+    }
+    next();
+};
+app.use(handler);
 
 module.exports = serverless(app);

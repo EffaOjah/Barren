@@ -1,25 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+// Cache connection for serverless
+let cachedConnection = null;
 
 const connectDB = async () => {
     try {
-        // Use MONGODB_URI for consistency (supports both local and Atlas)
-        const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
-
-        if (!mongoURI) {
-            throw new Error('MongoDB URI is not defined in environment variables');
+        // Load env only in development
+        if (process.env.NODE_ENV !== "production") {
+            require("dotenv").config();
         }
 
+        const mongoURI = process.env.MONGODB_URI;
+        if (!mongoURI) throw new Error("MongoDB URI is not defined in environment variables");
+
+        // Reuse connection if already connected (serverless optimization)
+        if (cachedConnection) return cachedConnection;
+
         const conn = await mongoose.connect(mongoURI, {
-            // These options are recommended for MongoDB Atlas
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-            socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
         });
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
-        console.log(`Database: ${conn.connection.name}`);
+        cachedConnection = conn;
+        return conn;
     } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
+        console.error(`MongoDB connection error: ${error.message}`);
+        throw error; // Let serverless handler handle errors
     }
 };
 
