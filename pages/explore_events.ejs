@@ -32,6 +32,25 @@
 	<link href='/vendor/bootstrap/css/bootstrap.min.css' rel='stylesheet'>
 	<link href='/vendor/bootstrap-select/dist/css/bootstrap-select.min.css' rel='stylesheet'>
 
+	<!-- Custom Loader Styles -->
+	<style>
+		#events-loader {
+			position: relative;
+			min-height: 400px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#events-loader .spinner-border {
+			width: 3rem;
+			height: 3rem;
+			border-width: 0.3rem;
+		}
+		.loader-hidden {
+			display: none !important;
+		}
+	</style>
+
 	<!-- Header Start-->
     <header class="header">
       <div class="header-inner">
@@ -322,6 +341,13 @@
                       Free
                     </button>
                   </div>
+                  <!-- Loader -->
+                  <div id="events-loader">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading events...</span>
+                    </div>
+                  </div>
+                  <!-- Events Container -->
                   <div
                     class="row"
                     id="events-container"
@@ -475,10 +501,21 @@
       });
 
       async function loadEvents() {
+        const loader = document.getElementById("events-loader");
+        const eventsContainer = document.getElementById("events-container");
+        
+        // Show loader
+        loader.classList.remove("loader-hidden");
+        eventsContainer.classList.add("loader-hidden");
+        
         fetch("/api/events")
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
+            
+            // Hide loader and show events
+            loader.classList.add("loader-hidden");
+            eventsContainer.classList.remove("loader-hidden");
             if (data.success) {
               const eventsContainer =
                 document.getElementById("events-container");
@@ -552,6 +589,11 @@
           })
           .catch((error) => {
             console.error("Error loading events:", error);
+            
+            // Hide loader on error
+            loader.classList.add("loader-hidden");
+            eventsContainer.classList.remove("loader-hidden");
+            eventsContainer.innerHTML = "<div class='col-12 text-center mt-5'><p class='text-danger'>Error loading events. Please try again later.</p></div>";
           });
       }
     </script>

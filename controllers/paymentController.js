@@ -5,7 +5,7 @@ const User = require("../models/user.js");
 const Invoice = require("../models/invoice.js");
 const generateInvoiceNumber = require("../utils/generateInvoiceNumber.js");
 const Ticket = require("../models/ticket.js");
-const { sendTicketEmail } = require("../utils/emailService.js");
+const emailEventEmitter = require("../utils/emailEventEmitter.js");
 
 const startPayment = async (req, res) => {
     try {
@@ -91,12 +91,6 @@ const verifypayment = async (req, res) => {
             // Check if Ticket exists
             let ticket = await Ticket.findOne({ transactionId: transaction._id });
 
-            // Send Email
-            console.log('Sending email for ticket...');
-
-            const invoiceUrl = `${process.env.APP_URL || 'http://localhost:3000'}/invoice/${invoice._id}`;
-            await sendTicketEmail(user.email, ticket, invoiceUrl, transaction.eventId);
-
             if (!ticket) {
                 ticket = new Ticket({
                     userId: user._id,
@@ -106,13 +100,17 @@ const verifypayment = async (req, res) => {
                     isUsed: false
                 });
                 await ticket.save();
-
-                // Send Email
-                console.log('Sending email for ticket...');
-
-                const invoiceUrl = `${process.env.APP_URL || 'http://localhost:3000'}/invoice/${invoice._id}`;
-                await sendTicketEmail(user.email, ticket, invoiceUrl, transaction.eventId);
             }
+
+            console.log("Email Event Emitted");
+            // Emit email event asynchronously (non-blocking)
+            const invoiceUrl = `${process.env.APP_URL || 'http://localhost:3000'}/invoice/${invoice._id}`;
+            emailEventEmitter.emit('sendTicketEmail', {
+                to: user.email,
+                ticket,
+                invoiceUrl,
+                event: transaction.eventId
+            });
 
             // Return event + transaction details to frontend
             return res.json({

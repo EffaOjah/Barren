@@ -102,7 +102,9 @@
                     <a class="nav-link active" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/event/explore">Explore Events</a>
+                    <a class="nav-link" href="/events/explore"
+                      >Explore Events</a
+                    >
                   </li>
                 </ul>
               </div>
@@ -197,15 +199,10 @@
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                      <a href="index.html">Home</a>
+                      <a href="/">Home</a>
                     </li>
                     <li class="breadcrumb-item">
-                      <a href="explore_events.html">Explore Events</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                      <a href="online_event_detail_view.html"
-                        >Online Event Detail View</a
-                      >
+                      <a href="/events/explore">Explore Events</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                       Checkout
@@ -241,6 +238,7 @@
                             type="text"
                             placeholder=""
                             id="first_name"
+                            value="<%= user.firstName %>"
                           />
                         </div>
                       </div>
@@ -252,6 +250,7 @@
                             type="text"
                             placeholder=""
                             id="last_name"
+                            value="<%= user.lastName %>"
                           />
                         </div>
                       </div>
@@ -263,6 +262,7 @@
                             type="text"
                             placeholder=""
                             id="email"
+                            value="<%= user.email %>"
                           />
                         </div>
                       </div>
