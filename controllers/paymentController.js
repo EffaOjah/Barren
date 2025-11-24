@@ -104,7 +104,7 @@ const verifypayment = async (req, res) => {
 
             console.log("Email Event Emitted");
             // Emit email event asynchronously (non-blocking)
-            const invoiceUrl = `${process.env.APP_URL || 'http://localhost:3000'}/invoice/${invoice._id}`;
+            const invoiceUrl = `${'https://barren-mx53.onrender.com'}/invoice/${invoice._id}`;
             emailEventEmitter.emit('sendTicketEmail', {
                 to: user.email,
                 ticket,

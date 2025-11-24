@@ -3,7 +3,7 @@ const Transaction = require("../models/transactions.js");
 const Event = require("../models/event.js");
 const Ticket = require("../models/ticket.js");
 
-const PAYSTACK_SECRET = process.env.PAYSTACK_TEST_SECRET_KEY;
+const PAYSTACK_SECRET = process.env.PAYSTACK_LIVE_SECRET_KEY;
 
 const initializePayment = async (email, amount, metadata) => {
     const response = await axios.post(
